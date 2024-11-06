@@ -2,9 +2,12 @@ package provider
 
 import (
 	"context"
+	"errors"
+	"slices"
 
 	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/threefoldtech/tfgrid-sdk-go/grid-client/deployer"
+	"github.com/threefoldtech/tfgrid-sdk-go/grid-client/zos"
 )
 
 // Scheduler controlling struct
@@ -63,6 +66,11 @@ func (*Scheduler) Create(
 	nodeFilter, ssds, hdds := parseSchedulerInput(input)
 
 	nodes, err := deployer.FilterNodes(ctx, config.TFPluginClient, nodeFilter, hdds, ssds, nil)
+	if errors.Is(err, deployer.ErrNoNodesMatchesResources) && slices.Contains(nodeFilter.Features, zos.NetworkLightType) {
+		nodeFilter.Features = []string{zos.NetworkType, zos.ZMachineType}
+		nodes, err = deployer.FilterNodes(ctx, config.TFPluginClient, nodeFilter, hdds, ssds, nil)
+	}
+
 	if err != nil {
 		return id, state, err
 	}
