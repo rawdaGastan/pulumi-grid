@@ -1,9 +1,12 @@
 import os
+import random
+import string
 import pulumi
 import pulumi_threefold as threefold
 
 mnemonic = os.environ['MNEMONIC']
 network = os.environ['NETWORK']
+rand_str = ''.join(random.sample(string.ascii_lowercase, 8))
 
 provider = threefold.Provider("provider", mnemonic=mnemonic, network=network)
 scheduler = threefold.Scheduler("scheduler",
@@ -12,7 +15,7 @@ scheduler = threefold.Scheduler("scheduler",
     farm_ids=[1],
     opts = pulumi.ResourceOptions(provider=provider))
 network = threefold.Network("network",
-    name="test",
+    name=f"net_{rand_str}",
     description="test network",
     nodes=[scheduler.nodes[0]],
     ip_range="10.1.0.0/16",
@@ -21,8 +24,8 @@ network = threefold.Network("network",
         depends_on=[scheduler]))
 kubernetes = threefold.Kubernetes("kubernetes",
     master=threefold.K8sNodeInputArgs(
-        name="kubernetes",
-        network_name="test",
+        name=f"kubernetes_{rand_str}",
+        network_name=f"net_{rand_str}",
         node_id=scheduler.nodes[0],
         disk_size=2,
         planetary=True,
@@ -32,8 +35,8 @@ kubernetes = threefold.Kubernetes("kubernetes",
     ),
     workers=[
         threefold.K8sNodeInputArgs(
-            name="worker1",
-            network_name="test",
+            name=f"worker1_{rand_str}",
+            network_name=f"net_{rand_str}",
             node_id=scheduler.nodes[0],
             disk_size=2,
             cpu=2,
@@ -41,8 +44,8 @@ kubernetes = threefold.Kubernetes("kubernetes",
             mycelium=True,
         ),
         threefold.K8sNodeInputArgs(
-            name="worker2",
-            network_name="test",
+            name=f"worker2_{rand_str}",
+            network_name=f"net_{rand_str}",
             node_id=scheduler.nodes[0],
             disk_size=2,
             cpu=2,
@@ -51,7 +54,7 @@ kubernetes = threefold.Kubernetes("kubernetes",
         ),
     ],
     token="t123456789",
-    network_name="test",
+    network_name=f"net_{rand_str}",
     ssh_key=None,
     opts = pulumi.ResourceOptions(provider=provider,
         depends_on=[network]))

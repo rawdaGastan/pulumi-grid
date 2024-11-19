@@ -1,6 +1,8 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as threefold from "@threefold/pulumi";
 
+var rand_str = Math.random().toString(36).slice(8)
+
 const provider = new threefold.Provider("provider", {mnemonic: process.env.MNEMONIC, network: process.env.NETWORK});
 const scheduler = new threefold.Scheduler("scheduler", {
     mru: 0.25,
@@ -11,9 +13,9 @@ const scheduler = new threefold.Scheduler("scheduler", {
 });
 const deployment = new threefold.Deployment("deployment", {
     node_id: scheduler.nodes[0],
-    name: "zdb",
+    name: "deployment_"+rand_str,
     zdbs: [{
-        name: "zdbsTest",
+        name: "zdb_"+rand_str,
         size: 2,
         password: "123456",
     }],

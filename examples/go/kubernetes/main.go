@@ -1,13 +1,22 @@
 package main
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"os"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/threefoldtech/pulumi-threefold/sdk/go/threefold"
 )
 
+func randomString() string {
+	bytes := make([]byte, 8)
+	rand.Read(bytes)
+	return base64.URLEncoding.EncodeToString(bytes)[:8]
+}
+
 func main() {
+	randStr := randomString()
 	pulumi.Run(func(ctx *pulumi.Context) error {
 		tfProvider, err := threefold.NewProvider(ctx, "provider", &threefold.ProviderArgs{
 			Mnemonic: pulumi.String(os.Getenv("MNEMONIC")),
@@ -26,7 +35,7 @@ func main() {
 			return err
 		}
 		network, err := threefold.NewNetwork(ctx, "network", &threefold.NetworkArgs{
-			Name:        pulumi.String("test"),
+			Name:        pulumi.String("net_" + randStr),
 			Description: pulumi.String("test network"),
 			Nodes: pulumi.Array{
 				scheduler.Nodes.ApplyT(func(nodes []int) (int, error) {
@@ -43,8 +52,8 @@ func main() {
 		}
 		kubernetes, err := threefold.NewKubernetes(ctx, "kubernetes", &threefold.KubernetesArgs{
 			Master: &threefold.K8sNodeInputArgs{
-				Name:         pulumi.String("kubernetes"),
-				Network_name: pulumi.String("test"),
+				Name:         pulumi.String("kubernetes_" + randStr),
+				Network_name: pulumi.String("net_" + randStr),
 				Node_id: scheduler.Nodes.ApplyT(func(nodes []int) (int, error) {
 					return nodes[0], nil
 				}).(pulumi.IntOutput),
@@ -56,8 +65,8 @@ func main() {
 			},
 			Workers: threefold.K8sNodeInputArray{
 				&threefold.K8sNodeInputArgs{
-					Name:         pulumi.String("worker1"),
-					Network_name: pulumi.String("test"),
+					Name:         pulumi.String("worker1_" + randStr),
+					Network_name: pulumi.String("net_" + randStr),
 					Node_id: scheduler.Nodes.ApplyT(func(nodes []int) (int, error) {
 						return nodes[0], nil
 					}).(pulumi.IntOutput),
@@ -66,8 +75,8 @@ func main() {
 					Disk_size: pulumi.Int(2),
 				},
 				&threefold.K8sNodeInputArgs{
-					Name:         pulumi.String("worker2"),
-					Network_name: pulumi.String("test"),
+					Name:         pulumi.String("worker2_" + randStr),
+					Network_name: pulumi.String("net_" + randStr),
 					Node_id: scheduler.Nodes.ApplyT(func(nodes []int) (int, error) {
 						return nodes[0], nil
 					}).(pulumi.IntOutput),
@@ -77,7 +86,7 @@ func main() {
 				},
 			},
 			Token:        pulumi.String("t123456789"),
-			Network_name: pulumi.String("test"),
+			Network_name: pulumi.String("net_" + randStr),
 			Ssh_key:      nil,
 		}, pulumi.Provider(tfProvider), pulumi.DependsOn([]pulumi.Resource{
 			network,

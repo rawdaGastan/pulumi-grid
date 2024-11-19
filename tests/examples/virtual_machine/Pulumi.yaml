@@ -7,6 +7,12 @@ plugins:
       path: ../../../bin
 
 resources:
+  random:
+    type: random:RandomString
+    properties:
+      length: 8
+      special: false
+
   provider:
     type: pulumi:providers:threefold
     properties:
@@ -28,7 +34,7 @@ resources:
       dependsOn:
         - ${scheduler}
     properties:
-      name: test
+      name: net_${random.result}
       description: test network
       nodes:
         - ${scheduler.nodes[0]}
@@ -43,14 +49,14 @@ resources:
         - ${network}
     properties:
       node_id: ${scheduler.nodes[0]}
-      name: deployment
-      network_name: test
+      name: deployment_${random.result}
+      network_name: net_${random.result}
       vms:
-        - name: vm
+        - name: vm_${random.result}
           node_id: ${scheduler.nodes[0]}
           flist: https://hub.grid.tf/tf-official-apps/base:latest.flist
           entrypoint: "/sbin/zinit init"
-          network_name: test
+          network_name: net_${random.result}
           cpu: 2
           memory: 256
           planetary: true

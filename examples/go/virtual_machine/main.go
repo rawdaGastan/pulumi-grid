@@ -1,13 +1,22 @@
 package main
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"os"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/threefoldtech/pulumi-threefold/sdk/go/threefold"
 )
 
+func randomString() string {
+	bytes := make([]byte, 8)
+	rand.Read(bytes)
+	return base64.URLEncoding.EncodeToString(bytes)[:8]
+}
+
 func main() {
+	randStr := randomString()
 	pulumi.Run(func(ctx *pulumi.Context) error {
 		tfProvider, err := threefold.NewProvider(ctx, "provider", &threefold.ProviderArgs{
 			Mnemonic: pulumi.String(os.Getenv("MNEMONIC")),
@@ -26,7 +35,7 @@ func main() {
 			return err
 		}
 		network, err := threefold.NewNetwork(ctx, "network", &threefold.NetworkArgs{
-			Name:        pulumi.String("test"),
+			Name:        pulumi.String("net_" + randStr),
 			Description: pulumi.String("test network"),
 			Nodes: pulumi.Array{
 				scheduler.Nodes.ApplyT(func(nodes []int) (int, error) {
@@ -45,17 +54,17 @@ func main() {
 			Node_id: scheduler.Nodes.ApplyT(func(nodes []int) (int, error) {
 				return nodes[0], nil
 			}).(pulumi.IntOutput),
-			Name:         pulumi.String("deployment"),
-			Network_name: pulumi.String("test"),
+			Name:         pulumi.String("deployment_" + randStr),
+			Network_name: pulumi.String("net_" + randStr),
 			Vms: threefold.VMInputArray{
 				&threefold.VMInputArgs{
-					Name: pulumi.String("vm"),
+					Name: pulumi.String("vm_" + randStr),
 					Node_id: scheduler.Nodes.ApplyT(func(nodes []int) (int, error) {
 						return nodes[0], nil
 					}).(pulumi.IntOutput),
 					Flist:        pulumi.String("https://hub.grid.tf/tf-official-apps/base:latest.flist"),
 					Entrypoint:   pulumi.String("/sbin/zinit init"),
-					Network_name: pulumi.String("test"),
+					Network_name: pulumi.String("net_" + randStr),
 					Cpu:          pulumi.Int(2),
 					Memory:       pulumi.Int(256),
 					Planetary:    pulumi.Bool(true),
