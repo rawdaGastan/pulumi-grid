@@ -7,6 +7,7 @@ const scheduler = new threefold.Scheduler("scheduler", {
     mru: 6,
     sru: 6,
     farm_ids: [1],
+		ygg: true,
 }, {
     provider: provider,
 });

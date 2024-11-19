@@ -23,6 +23,7 @@ resources:
       mru: 0.25 # 256 megabytes
       sru: 2
       farm_ids: [1]
+      ygg: true
 
   deployment:
     type: threefold:Deployment

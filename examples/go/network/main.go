@@ -28,6 +28,7 @@ func main() {
 			Farm_ids: pulumi.IntArray{
 				pulumi.Int(1),
 			},
+			Ygg: pulumi.Bool(true),
 		}, pulumi.Provider(tfProvider))
 		if err != nil {
 			return err

@@ -13,6 +13,7 @@ scheduler = threefold.Scheduler("scheduler",
     mru=6,
     sru=6,
     farm_ids=[1],
+    ygg=True,
     opts = pulumi.ResourceOptions(provider=provider))
 network = threefold.Network("network",
     name=f"net_{rand_str}",

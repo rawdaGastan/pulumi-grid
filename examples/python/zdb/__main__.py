@@ -13,6 +13,7 @@ scheduler = threefold.Scheduler("scheduler",
     mru=0.25,
     sru=2,
     farm_ids=[1],
+    ygg=True,
     opts = pulumi.ResourceOptions(provider=provider))
 deployment = threefold.Deployment("deployment",
     node_id=scheduler.nodes[0],

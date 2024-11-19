@@ -11,7 +11,8 @@ const network = new threefold.Network("network", {
     description: "test network",
     nodes: [scheduler.nodes[0]],
     ip_range: "10.1.0.0/16",
-		mycelium: true
+		mycelium: true,
+		ygg: true,
 }, {
     provider: provider,
     dependsOn: [scheduler],

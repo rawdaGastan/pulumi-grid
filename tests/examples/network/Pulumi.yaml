@@ -24,6 +24,7 @@ resources:
       provider: ${provider}
     properties:
       farm_ids: [1]
+      ygg: true
 
   network:
     type: threefold:Network

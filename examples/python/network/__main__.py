@@ -16,6 +16,7 @@ network = threefold.Network("network",
     nodes=[scheduler.nodes[0]],
     ip_range="10.1.0.0/16",
     mycelium=True,
+    ygg=True,
     opts=pulumi.ResourceOptions(provider=provider,
         depends_on=[scheduler]))
 pulumi.export("node_deployment_id", network.node_deployment_id)
