@@ -23,6 +23,7 @@ resources:
       mru: 0.25 # 256 megabytes
       sru: 2
       farm_ids: [1]
+      ygg: true
 
   network:
     type: threefold:Network
@@ -37,7 +38,6 @@ resources:
         - ${scheduler.nodes[0]}
       ip_range: 10.1.0.0/16
       mycelium: true
-      ygg: true
       # mycelium_keys:
       #   manual_nodeID: 9751c596c7c951aedad1a5f78f18b59515064adf660e0d55abead65e6fbbd627 # hex encoded 32 bytes [example]
 

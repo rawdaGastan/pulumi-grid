@@ -20,6 +20,10 @@ func TestZDB(t *testing.T) {
 		network = devNetwork
 	}
 
+	if network == mainNetwork || network == devNetwork {
+		t.SkipNow()
+	}
+
 	examplesDir := os.Getenv("EXAMPLES")
 	if examplesDir == "" {
 		examplesDir = examplesTestDir

@@ -6,6 +6,7 @@ import (
 )
 
 const devNetwork = "dev"
+const mainNetwork = "main"
 
 func testConnection(addr string, port string) bool {
 	for t := time.Now(); time.Since(t) < 3*time.Minute; {
