@@ -165,28 +165,12 @@ func updateNetworkFromState(network workloads.Network, state NetworkState) error
 		nodeDeploymentID[uint32(node)] = uint64(deploymentID)
 	}
 
-	myceliumKeys := make(map[uint32][]byte)
-	for nodeID, myceliumKey := range state.MyceliumKeys {
-		nodeID, err := strconv.Atoi(fmt.Sprint(nodeID))
-		if err != nil {
-			return err
-		}
-
-		myceliumKey, err := hex.DecodeString(myceliumKey)
-		if err != nil {
-			return err
-		}
-
-		myceliumKeys[uint32(nodeID)] = myceliumKey
-	}
-
 	network.SetAccessWGConfig(state.AccessWGConfig)
 	network.SetExternalIP(&externalIP)
 	network.SetExternalSK(externalSk)
 	network.SetPublicNodeID(uint32(state.PublicNodeID))
 	network.SetNodesIPRange(nodesIPRange)
 	network.SetNodeDeploymentID(nodeDeploymentID)
-	network.SetMyceliumKeys(myceliumKeys)
 
 	return nil
 }
