@@ -1,18 +1,26 @@
 package main
 
 import (
-	"encoding/base64"
 	"os"
+	"strings"
+
+	"math/rand"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/threefoldtech/pulumi-threefold/sdk/go/threefold"
-	"golang.org/x/exp/rand"
 )
 
 func randomString() string {
-	bytes := make([]byte, 8)
-	rand.Read(bytes)
-	return base64.URLEncoding.EncodeToString(bytes)[:8]
+	var alphabet []rune = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+
+	var sb strings.Builder
+
+	for i := 0; i < 8; i++ {
+		ch := alphabet[rand.Intn(len(alphabet))]
+		sb.WriteRune(ch)
+	}
+
+	return sb.String()
 }
 
 func main() {
