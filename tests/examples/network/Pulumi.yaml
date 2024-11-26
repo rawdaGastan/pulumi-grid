@@ -7,6 +7,12 @@ plugins:
       path: ../../../bin
 
 resources:
+  random:
+    type: random:RandomString
+    properties:
+      length: 8
+      special: false
+
   provider:
     type: pulumi:providers:threefold
     properties:
@@ -18,6 +24,7 @@ resources:
       provider: ${provider}
     properties:
       farm_ids: [1]
+      ygg: true
 
   network:
     type: threefold:Network
@@ -26,8 +33,9 @@ resources:
       dependsOn:
         - ${scheduler}
     properties:
-      name: testing
+      name: net_${random.result}
       description: test network
       nodes:
         - ${scheduler.nodes[0]}
       ip_range: 10.1.0.0/16
+      mycelium: true

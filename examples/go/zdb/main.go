@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"os"
 
@@ -8,7 +10,14 @@ import (
 	"github.com/threefoldtech/pulumi-threefold/sdk/go/threefold"
 )
 
+func randomString() string {
+	bytes := make([]byte, 8)
+	rand.Read(bytes)
+	return base64.URLEncoding.EncodeToString(bytes)[:8]
+}
+
 func main() {
+	randStr := randomString()
 	pulumi.Run(func(ctx *pulumi.Context) error {
 		tfProvider, err := threefold.NewProvider(ctx, "provider", &threefold.ProviderArgs{
 			Mnemonic: pulumi.String(os.Getenv("MNEMONIC")),
@@ -22,6 +31,7 @@ func main() {
 			Farm_ids: pulumi.IntArray{
 				pulumi.Int(1),
 			},
+			Ygg: pulumi.Bool(true),
 		}, pulumi.Provider(tfProvider))
 		if err != nil {
 			return err
@@ -30,10 +40,10 @@ func main() {
 			Node_id: scheduler.Nodes.ApplyT(func(nodes []int) (int, error) {
 				return nodes[0], nil
 			}).(pulumi.IntOutput),
-			Name: pulumi.String("zdb"),
+			Name: pulumi.String("deployment_" + randStr),
 			Zdbs: threefold.ZDBInputArray{
 				&threefold.ZDBInputArgs{
-					Name:     pulumi.String("zdbsTest"),
+					Name:     pulumi.String("zdb_" + randStr),
 					Size:     pulumi.Int(2),
 					Password: pulumi.String("123456"),
 				},

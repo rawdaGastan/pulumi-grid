@@ -1,21 +1,25 @@
 import os
+import random
+import string
 import pulumi
 import pulumi_threefold as threefold
 
 mnemonic = os.environ['MNEMONIC']
 network = os.environ['NETWORK']
+rand_str = ''.join(random.sample(string.ascii_lowercase, 8))
 
 provider = threefold.Provider("provider", mnemonic=mnemonic, network=network)
 scheduler = threefold.Scheduler("scheduler",
     mru=0.25,
     sru=2,
     farm_ids=[1],
+    ygg=True,
     opts = pulumi.ResourceOptions(provider=provider))
 deployment = threefold.Deployment("deployment",
     node_id=scheduler.nodes[0],
-    name="zdb",
+    name=f"deployment_{rand_str}",
     zdbs=[threefold.ZDBInputArgs(
-        name="zdbsTest",
+        name=f"zdb_{rand_str}",
         size=2,
         password="123456",
     )],

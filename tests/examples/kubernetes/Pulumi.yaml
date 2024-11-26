@@ -7,6 +7,12 @@ plugins:
       path: ../../../bin
 
 resources:
+  random:
+    type: random:RandomString
+    properties:
+      length: 8
+      special: false
+
   provider:
     type: pulumi:providers:threefold
     properties:
@@ -20,6 +26,7 @@ resources:
       mru: 6
       sru: 6
       farm_ids: [1]
+      ygg: true
 
   network:
     type: threefold:Network
@@ -28,7 +35,7 @@ resources:
       dependsOn:
         - ${scheduler}
     properties:
-      name: test
+      name: net_${random.result}
       description: test network
       nodes:
         - ${scheduler.nodes[0]}
@@ -43,8 +50,8 @@ resources:
         - ${network}
     properties:
       master:
-        name: kubernetes
-        network_name: test
+        name: kubernetes_${random.result}
+        network_name: net_${random.result}
         node_id: ${scheduler.nodes[0]}
         disk_size: 2
         planetary: true
@@ -53,15 +60,15 @@ resources:
         memory: 2048
 
       workers:
-        - name: worker1
-          network_name: test
+        - name: worker1_${random.result}
+          network_name: net_${random.result}
           node_id: ${scheduler.nodes[0]}
           disk_size: 2
           cpu: 2
           memory: 2048
           mycelium: true
-        - name: worker2
-          network_name: test
+        - name: worker2_${random.result}
+          network_name: net_${random.result}
           node_id: ${scheduler.nodes[0]}
           disk_size: 2
           cpu: 2
@@ -69,5 +76,5 @@ resources:
           mycelium: true
 
       token: t123456789
-      network_name: test
+      network_name: net_${random.result}
       ssh_key:

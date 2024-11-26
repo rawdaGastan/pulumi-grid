@@ -2,6 +2,12 @@ name: pulumi-threefold
 runtime: yaml
 
 resources:
+  random:
+    type: random:RandomString
+    properties:
+      length: 8
+      special: false
+
   provider:
     type: pulumi:providers:threefold
     options:
@@ -17,6 +23,7 @@ resources:
       mru: 0.25 # 256 megabytes
       sru: 2
       farm_ids: [1]
+      ygg: true
 
   deployment:
     type: threefold:Deployment
@@ -24,7 +31,7 @@ resources:
       provider: ${provider}
     properties:
       node_id: ${scheduler.nodes[0]}
-      name: zdb
+      name: zdb_${random.result}
       zdbs:
         - name: zdbsTest
           size: 2
