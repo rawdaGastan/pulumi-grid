@@ -1,7 +1,6 @@
 {
   "name": "threefold",
   "displayName": "Threefold Grid",
-  "version": "0.7.7",
   "description": "The Pulumi Resource Provider for the Threefold Grid.",
   "keywords": [
     "pulumi",
