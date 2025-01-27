@@ -8,12 +8,6 @@ runtime: yaml
 #       path: ../../../bin
 
 resources:
-  random:
-    type: random:RandomString
-    properties:
-      length: 8
-      special: false
-
   provider:
     type: pulumi:providers:threefold
     options:
@@ -38,7 +32,7 @@ resources:
       dependsOn:
         - ${scheduler}
     properties:
-      name: net_${random.result}
+      name: net_pulumi
       description: test network
       nodes:
         - ${scheduler.nodes[0]}
@@ -53,8 +47,8 @@ resources:
         - ${network}
     properties:
       master:
-        name: kubernetes_${random.result}
-        network_name: net_${random.result}
+        name: kubernetes_pulumi
+        network_name: net_pulumi
         node_id: ${scheduler.nodes[0]}
         disk_size: 2
         planetary: true
@@ -63,15 +57,15 @@ resources:
         memory: 2048
 
       workers:
-        - name: worker1_${random.result}
-          network_name: net_${random.result}
+        - name: worker1_pulumi
+          network_name: net_pulumi
           node_id: ${scheduler.nodes[0]}
           disk_size: 2
           cpu: 2
           memory: 2048
           mycelium: true
-        - name: worker2_${random.result}
-          network_name: net_${random.result}
+        - name: worker2_pulumi
+          network_name: net_pulumi
           node_id: ${scheduler.nodes[0]}
           disk_size: 2
           cpu: 2
@@ -79,7 +73,7 @@ resources:
           mycelium: true
 
       token: t123456789
-      network_name: net_${random.result}
+      network_name: net_pulumi
       ssh_key:
 
 outputs:

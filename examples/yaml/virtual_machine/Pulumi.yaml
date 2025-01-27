@@ -2,12 +2,6 @@ name: pulumi-threefold
 runtime: yaml
 
 resources:
-  random:
-    type: random:RandomString
-    properties:
-      length: 8
-      special: false
-
   provider:
     type: pulumi:providers:threefold
     options:
@@ -32,7 +26,7 @@ resources:
       dependsOn:
         - ${scheduler}
     properties:
-      name: net_${random.result}
+      name: net_pulumi
       description: test network
       nodes:
         - ${scheduler.nodes[0]}
@@ -49,14 +43,14 @@ resources:
         - ${network}
     properties:
       node_id: ${scheduler.nodes[0]}
-      name: deployment_${random.result}
-      network_name: net_${random.result}
+      name: deployment_pulumi
+      network_name: net_pulumi
       vms:
-        - name: vm_${random.result}
+        - name: vm_pulumi
           node_id: ${scheduler.nodes[0]}
           flist: https://hub.grid.tf/tf-official-apps/base:latest.flist
           entrypoint: "/sbin/zinit init"
-          network_name: net_${random.result}
+          network_name: net_pulumi
           cpu: 2
           memory: 256
           planetary: true
