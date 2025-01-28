@@ -2,12 +2,6 @@ name: pulumi-threefold
 runtime: yaml
 
 resources:
-  random:
-    type: random:RandomString
-    properties:
-      length: 8
-      special: false
-
   provider:
     type: pulumi:providers:threefold
     options:
@@ -31,7 +25,7 @@ resources:
       provider: ${provider}
     properties:
       node_id: ${scheduler.nodes[0]}
-      name: zdb_${random.result}
+      name: zdb_pulumi
       zdbs:
         - name: zdbsTest
           size: 2
